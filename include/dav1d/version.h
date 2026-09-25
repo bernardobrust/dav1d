@@ -31,6 +31,7 @@
 extern "C" {
 #endif
 
+// I don't think we need to change the version
 #define DAV1D_API_VERSION_MAJOR 7
 #define DAV1D_API_VERSION_MINOR 0
 #define DAV1D_API_VERSION_PATCH 0

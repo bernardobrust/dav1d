@@ -613,6 +613,8 @@ subdir('src')
 
 subdir('tools')
 
+subdir('exports')
+
 subdir('examples')
 
 subdir('tests')

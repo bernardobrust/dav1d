@@ -25,6 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+ /*
+  * Contains Modified Library Code
+  */
+
 #include "config.h"
 
 #include <errno.h>
@@ -38,6 +42,7 @@
 
 #include "src/internal.h"
 #include "src/log.h"
+#include "src/motion_vectors.h"
 #include "src/picture.h"
 #include "src/ref.h"
 #include "src/thread.h"
@@ -241,6 +246,8 @@ int dav1d_picture_alloc_copy(Dav1dContext *const c, Dav1dPicture *const dst, con
                              src->mastering_display, src->mastering_display_ref,
                              src->itut_t35, src->itut_t35_ref, src->n_itut_t35,
                              &src->m);
+    dav1d_picture_set_motion_vectors(dst, (Dav1dMotionVector *) src->motion_vectors,
+                                     src->motion_vectors_ref, src->n_motion_vectors);
 
     return 0;
 }
@@ -260,6 +267,7 @@ void dav1d_picture_ref(Dav1dPicture *const dst, const Dav1dPicture *const src) {
     if (src->content_light_ref) dav1d_ref_inc(src->content_light_ref);
     if (src->mastering_display_ref) dav1d_ref_inc(src->mastering_display_ref);
     if (src->itut_t35_ref) dav1d_ref_inc(src->itut_t35_ref);
+    if (src->motion_vectors_ref) dav1d_ref_inc(src->motion_vectors_ref);
     *dst = *src;
 }
 
@@ -309,6 +317,7 @@ void dav1d_picture_unref_internal(Dav1dPicture *const p) {
     dav1d_ref_dec(&p->content_light_ref);
     dav1d_ref_dec(&p->mastering_display_ref);
     dav1d_ref_dec(&p->itut_t35_ref);
+    dav1d_ref_dec(&p->motion_vectors_ref);
     memset(p, 0, sizeof(*p));
     dav1d_data_props_set_defaults(&p->m);
 }

@@ -25,6 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+ /*
+  * Contains Modified Library Code
+  */
+
 #include "config.h"
 
 #include <errno.h>
@@ -44,6 +48,7 @@
 #include "src/env.h"
 #include "src/filmgrain.h"
 #include "src/log.h"
+#include "src/motion_vectors.h"
 #include "src/qm.h"
 #include "src/recon.h"
 #include "src/ref.h"
@@ -2060,6 +2065,9 @@ static int decode_b(Dav1dTaskContext *const t,
         }
     }
 
+    if (t->frame_thread.pass != 2)
+        dav1d_motion_vectors_capture(t, b, bw4, bh4, w4, h4);
+
     return 0;
 }
 
@@ -3245,6 +3253,9 @@ error:
 void dav1d_decode_frame_exit(Dav1dFrameContext *const f, int retval) {
     const Dav1dContext *const c = f->c;
 
+    if (!retval)
+        retval = dav1d_motion_vectors_finalize(f);
+
     if (f->sr_cur.p.data[0])
         atomic_init(&f->task_thread.error, 0);
 
@@ -3277,6 +3288,7 @@ void dav1d_decode_frame_exit(Dav1dFrameContext *const f, int retval) {
     dav1d_ref_dec(&f->cur_segmap_ref);
     dav1d_ref_dec(&f->prev_segmap_ref);
     dav1d_ref_dec(&f->mvs_ref);
+    dav1d_motion_vectors_unref(f);
     dav1d_ref_dec(&f->seq_hdr_ref);
     dav1d_ref_dec(&f->frame_hdr_ref);
 
@@ -3563,6 +3575,8 @@ int dav1d_submit_frame(Dav1dContext *const c) {
     f->sbh = (f->bh + f->sb_step - 1) >> f->sb_shift;
     f->b4_stride = (f->bw + 31) & ~31;
     f->bitdepth_max = (1 << f->cur.p.bpc) - 1;
+    res = dav1d_motion_vectors_alloc(f);
+    if (res < 0) goto error;
     atomic_init(&f->task_thread.error, 0);
     const int uses_2pass = c->n_fc > 1;
     const int cols = f->frame_hdr->tiling.cols;
@@ -3734,6 +3748,7 @@ error:
     dav1d_picture_unref_internal(&f->cur);
     dav1d_thread_picture_unref(&f->sr_cur);
     dav1d_ref_dec(&f->mvs_ref);
+    dav1d_motion_vectors_unref(f);
     dav1d_ref_dec(&f->seq_hdr_ref);
     dav1d_ref_dec(&f->frame_hdr_ref);
     dav1d_data_props_copy(&c->cached_error_props, &c->in.m);

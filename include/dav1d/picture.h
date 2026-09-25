@@ -25,6 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+ * Contains Modified Library Code
+ */
+
 #ifndef DAV1D_PICTURE_H
 #define DAV1D_PICTURE_H
 
@@ -33,6 +37,7 @@
 
 #include "common.h"
 #include "headers.h"
+#include "motion_vectors.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -91,14 +96,23 @@ typedef struct Dav1dPicture {
      */
     size_t n_itut_t35;
 
-    uintptr_t reserved[4]; ///< reserved for future use
+    /**
+     * Per-leaf-block motion data, or NULL when motion-vector export was not
+     * enabled or the picture has no inter-coded blocks. The array remains
+     * valid until dav1d_picture_unref() is called on this picture.
+     */
+    const Dav1dMotionVector *motion_vectors;
+    size_t n_motion_vectors;
+
+    uintptr_t reserved[2]; ///< reserved for future use
 
     struct Dav1dRef *frame_hdr_ref; ///< Dav1dFrameHeader allocation origin
     struct Dav1dRef *seq_hdr_ref; ///< Dav1dSequenceHeader allocation origin
     struct Dav1dRef *content_light_ref; ///< Dav1dContentLightLevel allocation origin
     struct Dav1dRef *mastering_display_ref; ///< Dav1dMasteringDisplay allocation origin
     struct Dav1dRef *itut_t35_ref; ///< Dav1dITUTT35 allocation origin
-    uintptr_t reserved_ref[4]; ///< reserved for future use
+    struct Dav1dRef *motion_vectors_ref; ///< Dav1dMotionVector allocation origin
+    uintptr_t reserved_ref[3]; ///< reserved for future use
     struct Dav1dRef *ref; ///< Frame data allocation origin
 
     void *allocator_data; ///< pointer managed by the allocator

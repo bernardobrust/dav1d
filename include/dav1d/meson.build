@@ -27,6 +27,7 @@ dav1d_api_headers = [
     'data.h',
     'dav1d.h',
     'headers.h',
+    'motion_vectors.h',
     'picture.h',
     'version.h',
 ]

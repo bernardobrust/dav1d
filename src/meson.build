@@ -42,6 +42,7 @@ libdav1d_sources = files(
     'log.c',
     'mem.c',
     'msac.c',
+    'motion_vectors.c',
     'obu.c',
     'pal.c',
     'picture.c',

@@ -25,6 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+ /*
+  * Contains Modified Library Code
+  */
+
 #include "config.h"
 #include "vcs_version.h"
 
@@ -84,6 +88,7 @@ COLD void dav1d_default_settings(Dav1dSettings *const s) {
     s->output_invisible_frames = 0;
     s->inloop_filters = DAV1D_INLOOPFILTER_ALL;
     s->decode_frame_type = DAV1D_DECODEFRAMETYPE_ALL;
+    s->export_motion_vectors = 0;
 }
 
 static void close_internal(Dav1dContext **const c_out, int flush);
@@ -176,6 +181,7 @@ COLD int dav1d_open(Dav1dContext **const c_out, const Dav1dSettings *const s) {
     c->output_invisible_frames = s->output_invisible_frames;
     c->inloop_filters = s->inloop_filters;
     c->decode_frame_type = s->decode_frame_type;
+    c->export_motion_vectors = s->export_motion_vectors;
 
     dav1d_data_props_set_defaults(&c->cached_error_props);
 

@@ -95,7 +95,8 @@ typedef struct Dav1dSettings {
                                                ///< DAV1D_INLOOPFILTER_ALL)
     enum Dav1dDecodeFrameType decode_frame_type; ///< frame types to decode (default
                                                  ///< DAV1D_DECODEFRAMETYPE_ALL)
-    uint8_t reserved[16]; ///< reserved for future use
+    uint8_t export_motion_vectors; ///< export per-leaf-block motion vectors (default 0)
+    uint8_t reserved[15]; ///< reserved for future use
 } Dav1dSettings;
 
 /**

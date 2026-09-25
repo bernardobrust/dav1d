@@ -189,6 +189,7 @@ struct Dav1dContext {
     int output_invisible_frames;
     enum Dav1dInloopFilterType inloop_filters;
     enum Dav1dDecodeFrameType decode_frame_type;
+    int export_motion_vectors;
     int drain;
     enum PictureFlags frame_flags;
     enum Dav1dEventFlags event_flags;
@@ -222,6 +223,9 @@ struct Dav1dFrameContext {
     Dav1dThreadPicture sr_cur; // after super-resolution upscaling
     Dav1dRef *mvs_ref;
     refmvs_temporal_block *mvs, *ref_mvs[7];
+    Dav1dRef *motion_vectors_grid_ref;
+    Dav1dMotionVector *motion_vectors_grid;
+    size_t motion_vectors_grid_len;
     Dav1dRef *ref_mvs_ref[7];
     Dav1dRef *cur_segmap_ref, *prev_segmap_ref;
     uint8_t *cur_segmap;
