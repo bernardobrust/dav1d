@@ -8,3 +8,8 @@ tags
 /tests/dav1d-test-data
 *.snap
 /tools/output/xxhash.h
+
+# Extra exclusions from me
+.vs/
+pkgconfig/
+subprojects/
